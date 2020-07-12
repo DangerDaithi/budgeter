@@ -16,17 +16,17 @@ namespace Budgeter
     class Program
     {
 
-        private static Dictionary<ExpenditureCategory, int> _expendituresToTotalsMap = new Dictionary<ExpenditureCategory, int>() {
-            {ExpenditureCategory.Appoinments, 0 },
-            {ExpenditureCategory.Bins, 0 },
-            { ExpenditureCategory.Broadband, 0},
-            {ExpenditureCategory.Electricity, 0 },
-            {ExpenditureCategory.Food, 0 },
-            {ExpenditureCategory.Gas, 0 },
-            {ExpenditureCategory.Misc, 0 },
-            {ExpenditureCategory.Mobile, 0 },
-            {ExpenditureCategory.Petrol, 0 },
-            {ExpenditureCategory.Rent, 0 },
+        private static Dictionary<ExpenditureCategory, double> _expendituresToTotalsMap = new Dictionary<ExpenditureCategory, double>() {
+            {ExpenditureCategory.Appoinments, 0.00 },
+            {ExpenditureCategory.Bins, 0.00 },
+            { ExpenditureCategory.Broadband, 0.00},
+            {ExpenditureCategory.Electricity, 0.00 },
+            {ExpenditureCategory.Food, 0.00 },
+            {ExpenditureCategory.Gas, 0.00 },
+            {ExpenditureCategory.Misc, 0.00 },
+            {ExpenditureCategory.Mobile, 0.00 },
+            {ExpenditureCategory.Petrol, 0.00 },
+            {ExpenditureCategory.Rent, 0.00 },
             {ExpenditureCategory.Social, 0 }
         };
 
@@ -35,24 +35,24 @@ namespace Budgeter
             Console.WriteLine("*** Budgeting app v1.0.0 ***" +
                 "\n" +
                 "Enter budget and hit return: ");
-            var budgetString = Console.ReadLine();
-            var budget = 0;
-            while (!int.TryParse(budgetString, out budget))
-            {
-                Console.WriteLine("Not a valid number, try again.");
-                budgetString = Console.ReadLine();
-            }
-            Console.WriteLine("Hot return when finished to proceed to next category.");
 
+            var budget = getBudgetFromStandardIn();
+            getExpenditireTotalsFromStandardIn();
+            printExpenditureTotalsToStandardOut();
+            printExpenditureSubTotalToStandardOut(budget);
+        }
+
+        private static void getExpenditireTotalsFromStandardIn()
+        {
             var currentExpenditureCount = 1;
             foreach (var expenditureToTotal in _expendituresToTotalsMap.ToList())
             {
                 Console.WriteLine($"{currentExpenditureCount}/{_expendituresToTotalsMap.Count}.{expenditureToTotal.Key}:");
-                var expenditureTotal = 0;
+                var expenditureTotal = 0.00;
                 var input = Console.ReadLine();
                 while (!string.IsNullOrEmpty(input))
-                {                  
-                    while (!int.TryParse(input, out expenditureTotal))
+                {
+                    while (!double.TryParse(input, out expenditureTotal))
                     {
                         Console.WriteLine("Not a valid number, try again.");
                         input = Console.ReadLine();
@@ -65,13 +65,34 @@ namespace Budgeter
                 }
                 currentExpenditureCount++;
             }
+        }
 
+        private static double getBudgetFromStandardIn()
+        {
+            var budget = 0.00;
+            var budgetString = Console.ReadLine();
+            while (!double.TryParse(budgetString, out budget))
+            {
+                Console.WriteLine("Not a valid number, try again.");
+                budgetString = Console.ReadLine();
+            }
+            Console.WriteLine("Hot return when finished to proceed to next category.");
+
+            return budget;
+        }
+
+
+        private static void printExpenditureTotalsToStandardOut()
+        {
             Console.WriteLine("Total for each expenditure category:");
             foreach (var expenditureToTotal in _expendituresToTotalsMap)
             {
                 Console.WriteLine($"\t{expenditureToTotal.Key}: {expenditureToTotal.Value}");
             }
+        }
 
+        private static void printExpenditureSubTotalToStandardOut(double budget)
+        {
             var subTotalExpenditure = _expendituresToTotalsMap.ToList().Sum(c => c.Value);
             Console.WriteLine($"Subtotal expenditure for month: {subTotalExpenditure}" +
                 $"\nTotal budget remaining: {budget - subTotalExpenditure}");
