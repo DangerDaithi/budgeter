@@ -16,6 +16,8 @@ namespace Budgeter
     class Program
     {
 
+        private static string _appVersion = "1.0.0";
+
         private static Dictionary<ExpenditureCategory, double> _expendituresToTotalsMap = new Dictionary<ExpenditureCategory, double>() {
             {ExpenditureCategory.Appoinments, 0.00 },
             {ExpenditureCategory.Bins, 0.00 },
@@ -32,7 +34,7 @@ namespace Budgeter
 
         static void Main(string[] args)
         {
-            Console.WriteLine("*** Budgeting app v1.0.0 ***" +
+            Console.WriteLine($"*** Budgeting app v{_appVersion} ***" +
                 "\n" +
                 "Enter budget and hit return: ");
 
@@ -40,6 +42,9 @@ namespace Budgeter
             getExpenditireTotalsFromStandardIn();
             printExpenditureTotalsToStandardOut();
             printExpenditureSubTotalToStandardOut(budget);
+
+            Console.WriteLine("Press any key to close terminal...");
+            Console.ReadKey();
         }
 
         private static void getExpenditireTotalsFromStandardIn()
@@ -99,3 +104,5 @@ namespace Budgeter
         }
     }
 }
+
+// new features, write to file
