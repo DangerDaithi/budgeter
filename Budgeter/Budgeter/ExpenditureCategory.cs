@@ -1,5 +1,4 @@
-﻿using System;
-namespace Budgeter
+﻿namespace Budgeter
 {
     public enum ExpenditureCategory
     {
@@ -9,10 +8,15 @@ namespace Budgeter
         Broadband,
         Bins,
         Rent,
-        Food,
+        SupermarketFood,
         Petrol,
         Appoinments,
         Social,
-        Misc
+        Misc,
+        Netflix,
+        Spotify,
+        Games,
+        RestaurantAndTakeout,
+        DomesticAndHoushold
     }
 }

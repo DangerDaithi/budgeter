@@ -12,3 +12,6 @@
 /Budgeter/.vs/Budgeter/DesignTimeBuild/.dtbcache
 /Budgeter/.vs/Budgeter/DesignTimeBuild
 /Budgeter/.vs/Budgeter
+/Budgeter/packages
+/Budgeter/Budgeter.Test/obj
+/Budgeter/Budgeter.Test/bin/Debug/netcoreapp2.1

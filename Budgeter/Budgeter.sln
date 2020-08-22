@@ -1,7 +1,10 @@
-
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeter", "Budgeter\Budgeter.csproj", "{5DD1B794-8F08-44AA-AF92-057FD80A203F}"
+VisualStudioVersion = 15.0.28307.489
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Budgeter", "Budgeter\Budgeter.csproj", "{5DD1B794-8F08-44AA-AF92-057FD80A203F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Budgeter.Test", "Budgeter.Test\Budgeter.Test.csproj", "{123AE69B-C689-4B02-899D-E81C76016399}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -13,5 +16,15 @@ Global
 		{5DD1B794-8F08-44AA-AF92-057FD80A203F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5DD1B794-8F08-44AA-AF92-057FD80A203F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5DD1B794-8F08-44AA-AF92-057FD80A203F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{123AE69B-C689-4B02-899D-E81C76016399}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{123AE69B-C689-4B02-899D-E81C76016399}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{123AE69B-C689-4B02-899D-E81C76016399}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{123AE69B-C689-4B02-899D-E81C76016399}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {84996391-04A1-457D-A23A-783F3B6735A1}
 	EndGlobalSection
 EndGlobal
