@@ -8,7 +8,7 @@ namespace Budgeter
     class Program
     {
 
-        private static string _appVersion = "2.1.1";
+        private static string _appVersion = "2.1.2";
 
         // read these from file in future app version
         private static readonly IEnumerable<ExpenditureCategory> _expenditureCategoriesToCalculate = new List<ExpenditureCategory>() {
