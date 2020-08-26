@@ -8,7 +8,7 @@ namespace Budgeter
     class Program
     {
 
-        private static string _appVersion = "2.1.0";
+        private static string _appVersion = "2.1.1";
 
         // read these from file in future app version
         private static readonly IEnumerable<ExpenditureCategory> _expenditureCategoriesToCalculate = new List<ExpenditureCategory>() {
@@ -38,22 +38,23 @@ namespace Budgeter
             Console.WriteLine("Enter budget and hit return: ");    
             var budget = getBudgetFromStandardIn();
 
-            Console.WriteLine("Enter month: ");
-            var month = getMonthFromStandardIn();         
+            Console.WriteLine("Enter time period: ");
+            var timePeriodString = getTimePeriodStringFromStandardIn();         
 
             var budgetCalculator = new BudgetCalculator(budget);
 
             Console.WriteLine("Hit return when finished to proceed to next category.");
             getExpenditureTotalsFromStandardIn(budgetCalculator);
 
-            Console.WriteLine($"REPORT OVERVIEW - {month} \n");
+            Console.WriteLine($"REPORT OVERVIEW - {timePeriodString} \n");
+            expenditureReportStringBuilder.AppendFormat($"REPORT OVERVIEW - {timePeriodString} \n");
 
-            Console.WriteLine("{0,30} : {1,5}", $"Budget for month {month}", budget);
-            Console.WriteLine("{0,30} : {1,5}", "Subtotal expenditure for month", budgetCalculator.SumTotal());
+            Console.WriteLine("{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budget);
+            Console.WriteLine("{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
             Console.WriteLine("{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());  
 
-            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", $"Budget for month {month}", budget);
-            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Subtotal expenditure for month", budgetCalculator.SumTotal());
+            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budget);
+            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
             expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());
 
             var expenditureSubtotalOverviewMessage = "\n\nSubtotals for each expenditure category: \n";
@@ -72,16 +73,16 @@ namespace Budgeter
             Console.ReadKey();
         }
 
-        private static string getMonthFromStandardIn()
+        private static string getTimePeriodStringFromStandardIn()
         {
-            var month = Console.ReadLine();
-            while (string.IsNullOrEmpty(month))
+            var timePeriod = Console.ReadLine();
+            while (string.IsNullOrEmpty(timePeriod))
             {
-                Console.WriteLine("Not a valid month, try again.");
-                month = Console.ReadLine();
+                Console.WriteLine("Not a valid entry, try again.");
+                timePeriod = Console.ReadLine();
             }
 
-            return month;
+            return timePeriod;
         }
 
         private static void getExpenditureTotalsFromStandardIn(BudgetCalculator budgetCalculator)
