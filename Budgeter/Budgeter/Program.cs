@@ -43,7 +43,10 @@ namespace Budgeter
          
             GetExpenditureTotalsFromStandardIn(budgetCalculator);
             
-            WriteReportToFile(GetExpenditureReportStringAndPrintToStandardOut(budgetCalculator, timePeriodString));
+            var reportOverview = BuildExpenditureReport(budgetCalculator, timePeriodString);
+            Console.WriteLine(reportOverview);
+            WriteReportToFile(reportOverview);
+
             Console.WriteLine();
             Console.WriteLine("\nPress any key to close terminal...");
             Console.ReadKey();
@@ -100,27 +103,20 @@ namespace Budgeter
             }
         }
 
-        private static string GetExpenditureReportStringAndPrintToStandardOut(BudgetCalculator budgetCalculator, string timePeriodString)
+        private static string BuildExpenditureReport(BudgetCalculator budgetCalculator, string timePeriodString)
         {
             var expenditureReportStringBuilder = new StringBuilder();
 
-            Console.WriteLine($"REPORT OVERVIEW - {timePeriodString} \n");
             expenditureReportStringBuilder.AppendFormat($"REPORT OVERVIEW - {timePeriodString} \n");
-
-            Console.WriteLine("{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budgetCalculator.Budget);
-            Console.WriteLine("{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
-            Console.WriteLine("{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());
 
             expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budgetCalculator.Budget);
             expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
             expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());
 
             var expenditureSubtotalOverviewMessage = "\n\nSubtotals for each expenditure category: \n";
-            Console.WriteLine(expenditureSubtotalOverviewMessage);
             expenditureReportStringBuilder.Append(expenditureSubtotalOverviewMessage);
 
             _expenditureCategoriesToCalculate.ToList().ForEach(e => {
-                Console.WriteLine("{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
                 expenditureReportStringBuilder.AppendFormat("\n{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
             });
             return expenditureReportStringBuilder.ToString();         
