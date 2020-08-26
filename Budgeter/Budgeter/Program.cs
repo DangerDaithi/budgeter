@@ -42,8 +42,9 @@ namespace Budgeter
             var budgetCalculator = new BudgetCalculator(budget);
          
             GetExpenditureTotalsFromStandardIn(budgetCalculator);
-            WriteReport(budgetCalculator, timePeriodString);
-
+            
+            WriteReportToFile(GetExpenditureReportStringAndPrintToStandardOut(budgetCalculator, timePeriodString));
+            Console.WriteLine();
             Console.WriteLine("\nPress any key to close terminal...");
             Console.ReadKey();
         }
@@ -99,7 +100,7 @@ namespace Budgeter
             }
         }
 
-        private static void WriteReport(BudgetCalculator budgetCalculator, string timePeriodString)
+        private static string GetExpenditureReportStringAndPrintToStandardOut(BudgetCalculator budgetCalculator, string timePeriodString)
         {
             var expenditureReportStringBuilder = new StringBuilder();
 
@@ -122,9 +123,14 @@ namespace Budgeter
                 Console.WriteLine("{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
                 expenditureReportStringBuilder.AppendFormat("\n{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
             });
+            return expenditureReportStringBuilder.ToString();         
+        }
 
+        private static void WriteReportToFile(string report)
+        {
             var expenditureWriter = new ExpenditureReportFileWriter();
-            expenditureWriter.Save(expenditureReportStringBuilder.ToString());
+            expenditureWriter.Save(report);
+            Console.WriteLine($"Expenditure report saved to directory {expenditureWriter.BasePath}");
         }
     }
 }
