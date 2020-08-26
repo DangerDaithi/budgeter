@@ -9,31 +9,52 @@ namespace Budgeter
         private Dictionary<ExpenditureCategory, double> _expenditureCategoriesToSubtotals;
         private readonly double _budget;
 
-        public BudgetCalculator(double budget, Dictionary<ExpenditureCategory, double> expenditureCategoriesToSubtotals)
-        {
-            _expenditureCategoriesToSubtotals = expenditureCategoriesToSubtotals;
+        public BudgetCalculator(double budget)
+        {            
+            _expenditureCategoriesToSubtotals = new Dictionary<ExpenditureCategory, double>();
             _budget = budget;
         }
 
-        public double CalculateExpenditureTotals()
+        public void Add(ExpenditureCategory category, double amount)
+        {
+            addCategoryIfNotExists(category);
+            _expenditureCategoriesToSubtotals[category] += amount;
+        }
+
+        public void Subtract(ExpenditureCategory category, double amount)
+        {
+            addCategoryIfNotExists(category);        
+            _expenditureCategoriesToSubtotals[category] -= amount;
+        }
+
+        public double SumTotal()
         {
             return _expenditureCategoriesToSubtotals.ToList().Sum(c => c.Value);
         }
 
-        public double GetSubtotalForExpenditureCategory(ExpenditureCategory category)
+        public double SumTotal(ExpenditureCategory category)
         {
             if (_expenditureCategoriesToSubtotals.TryGetValue(category, out double value))
             {
                 return value;
             }
-            // todo add logging
-            Console.WriteLine($"Budget Calculator failed to find the expenditure category {category}. Make sure the Budget Calculator is inititliased with this category.");
+            // todo log a warning that expenditure category was not added
             return 0;
         }
 
-        public double CalculateRemainingBugdet()
+        public double CalculateBudgetRemainder()
         {
             return _budget - _expenditureCategoriesToSubtotals.ToList().Sum(e => e.Value);
+        }
+
+        public IEnumerable<ExpenditureCategory> GetExpenditureCategories()
+        {
+            return _expenditureCategoriesToSubtotals.Keys;
+        }
+
+        private void addCategoryIfNotExists(ExpenditureCategory category)
+        {
+            _expenditureCategoriesToSubtotals.TryAdd(category, 0.00);
         }
     }
 }

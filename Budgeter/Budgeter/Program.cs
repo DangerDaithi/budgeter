@@ -8,7 +8,26 @@ namespace Budgeter
     class Program
     {
 
-        private static string _appVersion = "2.0.0";
+        private static string _appVersion = "2.1.0";
+
+        // read these from file in future app version
+        private static readonly IEnumerable<ExpenditureCategory> _expenditureCategoriesToCalculate = new List<ExpenditureCategory>() {
+            {ExpenditureCategory.Appoinments },
+            {ExpenditureCategory.Bins },
+            {ExpenditureCategory.Broadband},
+            {ExpenditureCategory.Electricity },
+            {ExpenditureCategory.Gas },
+            {ExpenditureCategory.Netflix },
+            {ExpenditureCategory.Spotify },
+            {ExpenditureCategory.Petrol },
+            {ExpenditureCategory.RestaurantAndTakeout },
+            {ExpenditureCategory.SupermarketFood },
+            {ExpenditureCategory.Games },
+            {ExpenditureCategory.DomesticAndHoushold },
+            {ExpenditureCategory.Mobile },
+            {ExpenditureCategory.Rent },
+            {ExpenditureCategory.Social },
+            {ExpenditureCategory.Misc }};
 
         public static void Main(string[] args)
         {
@@ -20,54 +39,34 @@ namespace Budgeter
             var budget = getBudgetFromStandardIn();
 
             Console.WriteLine("Enter month: ");
-            var month = getMonthFromStandardIn();
+            var month = getMonthFromStandardIn();         
 
-            Dictionary<ExpenditureCategory, double> expendituresToTotalsMap = new Dictionary<ExpenditureCategory, double>() {
-            {ExpenditureCategory.Appoinments, 0.00 },
-            {ExpenditureCategory.Bins, 0.00 },
-            {ExpenditureCategory.Broadband, 0.00},
-            {ExpenditureCategory.Electricity, 0.00 },
-            {ExpenditureCategory.Gas, 0.00 },
-            {ExpenditureCategory.Netflix, 0.00 },
-            {ExpenditureCategory.Spotify, 0.00 },
-            {ExpenditureCategory.Petrol, 0.00 },
-            {ExpenditureCategory.RestaurantAndTakeout, 0.00 },
-            {ExpenditureCategory.SupermarketFood, 0.00 },
-            {ExpenditureCategory.Games, 0.00 },
-            {ExpenditureCategory.DomesticAndHoushold, 0.00 },
-            {ExpenditureCategory.Mobile, 0.00 },                  
-            {ExpenditureCategory.Rent, 0.00 },
-            {ExpenditureCategory.Social, 0.00 },
-            {ExpenditureCategory.Misc, 0.00 }};
+            var budgetCalculator = new BudgetCalculator(budget);
 
             Console.WriteLine("Hit return when finished to proceed to next category.");
-            getExpenditireTotalsFromStandardIn(expendituresToTotalsMap);
+            getExpenditureTotalsFromStandardIn(budgetCalculator);
 
-            var budgetCalculator = new BudgetCalculator(budget, expendituresToTotalsMap);
-
-            Console.WriteLine("REPORT OVERVIEW \n");
+            Console.WriteLine($"REPORT OVERVIEW - {month} \n");
 
             Console.WriteLine("{0,30} : {1,5}", $"Budget for month {month}", budget);
-            Console.WriteLine("{0,30} : {1,5}", "Subtotal expenditure for month", budgetCalculator.CalculateExpenditureTotals());
-            Console.WriteLine("{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateRemainingBugdet());  
+            Console.WriteLine("{0,30} : {1,5}", "Subtotal expenditure for month", budgetCalculator.SumTotal());
+            Console.WriteLine("{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());  
 
             expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", $"Budget for month {month}", budget);
-            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Subtotal expenditure for month", budgetCalculator.CalculateExpenditureTotals());
-            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateRemainingBugdet());
+            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Subtotal expenditure for month", budgetCalculator.SumTotal());
+            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());
 
             var expenditureSubtotalOverviewMessage = "\n\nSubtotals for each expenditure category: \n";
             Console.WriteLine(expenditureSubtotalOverviewMessage);
             expenditureReportStringBuilder.Append(expenditureSubtotalOverviewMessage);
 
-            expendituresToTotalsMap.ToList().ForEach(e => {
-                Console.WriteLine("{0,20} : {1,5}", e.Key, budgetCalculator.GetSubtotalForExpenditureCategory(e.Key));
-                expenditureReportStringBuilder.AppendFormat("\n{0,20} : {1,5}", e.Key, budgetCalculator.GetSubtotalForExpenditureCategory(e.Key));
+           _expenditureCategoriesToCalculate.ToList().ForEach(e => {
+                Console.WriteLine("{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
+                expenditureReportStringBuilder.AppendFormat("\n{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
             });
 
             var expenditureWriter = new ExpenditureReportFileWriter();
-            expenditureWriter.Save(expenditureReportStringBuilder.ToString());
-
-            
+            expenditureWriter.Save(expenditureReportStringBuilder.ToString());         
 
             Console.WriteLine("\nPress any key to close terminal...");
             Console.ReadKey();
@@ -85,13 +84,13 @@ namespace Budgeter
             return month;
         }
 
-        private static void getExpenditireTotalsFromStandardIn(Dictionary<ExpenditureCategory, double> expendituresToTotalsMap)
+        private static void getExpenditureTotalsFromStandardIn(BudgetCalculator budgetCalculator)
         {
-
             var currentExpenditureCount = 1;
-            foreach (var expenditureToTotal in expendituresToTotalsMap.ToList())
+
+            foreach (var expenditureCategory in _expenditureCategoriesToCalculate.ToList())
             {
-                Console.WriteLine($"{currentExpenditureCount}/{expendituresToTotalsMap.Count} - {expenditureToTotal.Key}:");
+                Console.WriteLine($"{currentExpenditureCount}/{ _expenditureCategoriesToCalculate.ToList().Count()} - {expenditureCategory}:");
                 var expenditureTotal = 0.00;
                 var input = Console.ReadLine();
                 while (!string.IsNullOrEmpty(input))
@@ -103,7 +102,7 @@ namespace Budgeter
                     }
                     if (!string.IsNullOrEmpty(input))
                     {
-                        expendituresToTotalsMap[expenditureToTotal.Key] += expenditureTotal;
+                        budgetCalculator.Add(expenditureCategory, expenditureTotal);
                     }
                     input = Console.ReadLine();
                 }
