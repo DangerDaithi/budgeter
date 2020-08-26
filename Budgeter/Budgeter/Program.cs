@@ -31,49 +31,24 @@ namespace Budgeter
 
         public static void Main(string[] args)
         {
-            var expenditureReportStringBuilder = new StringBuilder();
-
             Console.WriteLine($"*** Budgeting app v{_appVersion} ***");
 
             Console.WriteLine("Enter budget and hit return: ");    
-            var budget = getBudgetFromStandardIn();
+            var budget = GetBudgetFromStandardIn();
 
             Console.WriteLine("Enter time period: ");
-            var timePeriodString = getTimePeriodStringFromStandardIn();         
+            var timePeriodString = GetTimePeriodStringFromStandardIn();         
 
             var budgetCalculator = new BudgetCalculator(budget);
-
-            Console.WriteLine("Hit return when finished to proceed to next category.");
-            getExpenditureTotalsFromStandardIn(budgetCalculator);
-
-            Console.WriteLine($"REPORT OVERVIEW - {timePeriodString} \n");
-            expenditureReportStringBuilder.AppendFormat($"REPORT OVERVIEW - {timePeriodString} \n");
-
-            Console.WriteLine("{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budget);
-            Console.WriteLine("{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
-            Console.WriteLine("{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());  
-
-            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budget);
-            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
-            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());
-
-            var expenditureSubtotalOverviewMessage = "\n\nSubtotals for each expenditure category: \n";
-            Console.WriteLine(expenditureSubtotalOverviewMessage);
-            expenditureReportStringBuilder.Append(expenditureSubtotalOverviewMessage);
-
-           _expenditureCategoriesToCalculate.ToList().ForEach(e => {
-                Console.WriteLine("{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
-                expenditureReportStringBuilder.AppendFormat("\n{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
-            });
-
-            var expenditureWriter = new ExpenditureReportFileWriter();
-            expenditureWriter.Save(expenditureReportStringBuilder.ToString());         
+         
+            GetExpenditureTotalsFromStandardIn(budgetCalculator);
+            WriteReport(budgetCalculator, timePeriodString);
 
             Console.WriteLine("\nPress any key to close terminal...");
             Console.ReadKey();
         }
 
-        private static string getTimePeriodStringFromStandardIn()
+        private static string GetTimePeriodStringFromStandardIn()
         {
             var timePeriod = Console.ReadLine();
             while (string.IsNullOrEmpty(timePeriod))
@@ -85,8 +60,21 @@ namespace Budgeter
             return timePeriod;
         }
 
-        private static void getExpenditureTotalsFromStandardIn(BudgetCalculator budgetCalculator)
+        private static double GetBudgetFromStandardIn()
         {
+            var budget = 0.00;
+            var budgetString = Console.ReadLine();
+            while (!double.TryParse(budgetString, out budget))
+            {
+                Console.WriteLine("Not a valid number, try again.");
+                budgetString = Console.ReadLine();
+            }
+            return budget;
+        }
+
+        private static void GetExpenditureTotalsFromStandardIn(BudgetCalculator budgetCalculator) {
+
+            Console.WriteLine("Hit return when finished to proceed to next category.");
             var currentExpenditureCount = 1;
 
             foreach (var expenditureCategory in _expenditureCategoriesToCalculate.ToList())
@@ -111,16 +99,32 @@ namespace Budgeter
             }
         }
 
-        private static double getBudgetFromStandardIn()
+        private static void WriteReport(BudgetCalculator budgetCalculator, string timePeriodString)
         {
-            var budget = 0.00;
-            var budgetString = Console.ReadLine();
-            while (!double.TryParse(budgetString, out budget))
-            {
-                Console.WriteLine("Not a valid number, try again.");
-                budgetString = Console.ReadLine();
-            }
-            return budget;
+            var expenditureReportStringBuilder = new StringBuilder();
+
+            Console.WriteLine($"REPORT OVERVIEW - {timePeriodString} \n");
+            expenditureReportStringBuilder.AppendFormat($"REPORT OVERVIEW - {timePeriodString} \n");
+
+            Console.WriteLine("{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budgetCalculator.Budget);
+            Console.WriteLine("{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
+            Console.WriteLine("{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());
+
+            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", $"Budget for time period {timePeriodString}", budgetCalculator.Budget);
+            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Subtotal expenditure for time period", budgetCalculator.SumTotal());
+            expenditureReportStringBuilder.AppendFormat("\n{0,30} : {1,5}", "Total budget remaining:", budgetCalculator.CalculateBudgetRemainder());
+
+            var expenditureSubtotalOverviewMessage = "\n\nSubtotals for each expenditure category: \n";
+            Console.WriteLine(expenditureSubtotalOverviewMessage);
+            expenditureReportStringBuilder.Append(expenditureSubtotalOverviewMessage);
+
+            _expenditureCategoriesToCalculate.ToList().ForEach(e => {
+                Console.WriteLine("{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
+                expenditureReportStringBuilder.AppendFormat("\n{0,20} : {1,5}", e, budgetCalculator.SumTotal(e));
+            });
+
+            var expenditureWriter = new ExpenditureReportFileWriter();
+            expenditureWriter.Save(expenditureReportStringBuilder.ToString());
         }
     }
 }

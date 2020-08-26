@@ -6,24 +6,25 @@ namespace Budgeter
 {
     public class BudgetCalculator
     {
-        private Dictionary<ExpenditureCategory, double> _expenditureCategoriesToSubtotals;
-        private readonly double _budget;
+        private Dictionary<ExpenditureCategory, double> _expenditureCategoriesToSubtotals;       
 
         public BudgetCalculator(double budget)
         {            
             _expenditureCategoriesToSubtotals = new Dictionary<ExpenditureCategory, double>();
-            _budget = budget;
+            Budget = budget;
         }
+
+        public double Budget { get; }
 
         public void Add(ExpenditureCategory category, double amount)
         {
-            addCategoryIfNotExists(category);
+            AddCategoryIfNotExists(category);
             _expenditureCategoriesToSubtotals[category] += amount;
         }
 
         public void Subtract(ExpenditureCategory category, double amount)
         {
-            addCategoryIfNotExists(category);        
+            AddCategoryIfNotExists(category);        
             _expenditureCategoriesToSubtotals[category] -= amount;
         }
 
@@ -44,15 +45,15 @@ namespace Budgeter
 
         public double CalculateBudgetRemainder()
         {
-            return _budget - _expenditureCategoriesToSubtotals.ToList().Sum(e => e.Value);
+            return Budget - _expenditureCategoriesToSubtotals.ToList().Sum(e => e.Value);
         }
 
         public IEnumerable<ExpenditureCategory> GetExpenditureCategories()
         {
             return _expenditureCategoriesToSubtotals.Keys;
-        }
+        }       
 
-        private void addCategoryIfNotExists(ExpenditureCategory category)
+        private void AddCategoryIfNotExists(ExpenditureCategory category)
         {
             _expenditureCategoriesToSubtotals.TryAdd(category, 0.00);
         }
